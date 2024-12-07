@@ -1,7 +1,8 @@
+import { APIWrapper } from './api-wrapper';
 import { ClassDefinition } from './class-definition';
-import { ErrorConstructors, ErrorMessages } from './errors';
-import { NATIVE_OBJECTS } from './index';
+import { Errors } from './errors';
 import { Kernel } from './kernel';
+import { BaseType, ParamsDefinition } from './type-validators';
 
 export class APIBuilder {
   /**
@@ -13,11 +14,10 @@ export class APIBuilder {
     // Create function as constructor
     const ctor = function () {
       // Constructor should be callable only with "NEW" keyword
-      if (!new.target) throw new ErrorConstructors.NewExpected(ErrorMessages.NewExpected());
+      if (!new.target) throw new (Kernel.Constructor('TypeError'))('must be called with new');
 
       // If constructor is present for this class
-      if (!definition.hasConstructor)
-        throw new ErrorConstructors.NoConstructor(ErrorMessages.NoConstructor(definition.classId));
+      if (!definition.hasConstructor) Errors.NoConstructor(definition.classId).Throw();
 
       // TODO: Implement type checking
       // const error = functionType.ValidArgumentTypes(arguments);
@@ -25,7 +25,7 @@ export class APIBuilder {
 
       // Call Native constructor and sets its result as new.target.prototype
       // eslint-disable-next-line prefer-rest-params
-      const result = Kernel.__setPrototypeOf(definition.__newAPIInstance(arguments), new.target.prototype);
+      const result = Kernel.__setPrototypeOf(definition.construct(arguments)[0], new.target.prototype);
       return result;
     };
 
@@ -51,13 +51,19 @@ export class APIBuilder {
    * @param id Name of the function
    * @returns Fake API Functions
    */
-  public static CreateMethod<T extends ClassDefinition<ClassDefinition | null, unknown>>(definition: T, id: string) {
+  public static CreateMethod<T extends ClassDefinition<ClassDefinition | null, unknown>>(
+    definition: T,
+    id: string,
+    isStatic: boolean,
+    params: ParamsDefinition,
+    returnType: BaseType,
+  ) {
     // Build arrow function so the methods are not possible to call with new expression
     const ctor = (that: unknown, params: unknown[]) => {
       // Check if the object has native bound
-      if (!NATIVE_OBJECTS.has(that as object))
-        throw new ErrorConstructors.BoundToPrototype(
-          ErrorMessages.BoundToPrototype('function', `${definition.classId}::${id}`),
+      if (!APIWrapper.NATIVE_HANDLES.has(that as object))
+        throw new (Kernel.Constructor('ReferenceError'))(
+          `Native function [${definition.classId}::${id}] object bound to prototype does not exist.`,
         );
 
       // TODO: Implement privileges and type checking
@@ -65,7 +71,8 @@ export class APIBuilder {
       //let error = functionType.ValidArgumentTypes(params);
       //if(error) throw new error.ctor(error.message);
 
-      const results = definition.__APICall(that, id, params);
+      // TODO: Yes
+      const results = null; /*definition.__APICall(that, id, params);*/
 
       // TODO: Implement Type checking
       //error = functionType.ResolveReturnType(returnKind);
@@ -84,9 +91,9 @@ export class APIBuilder {
     Kernel.SetName(ctor, id);
 
     // Handle with proxy for support with "this" callback
-    const final = new Proxy(ctor, {
+    const final = new Kernel['globalThis::Proxy'](ctor, {
       apply(t, that, params) {
-        return t(that, params);
+        return (t as typeof ctor)(that, params);
       },
     });
 

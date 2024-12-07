@@ -1,14 +1,14 @@
 import { Diagnostics } from '../errors';
-import { Kernel } from '../kernel';
 import { BaseType } from './base-types';
+import { Kernel } from '../kernel';
 
-export class FunctionType extends BaseType {
+export class BooleanType extends BaseType {
   public constructor() {
     super();
   }
   public override validate(diagnostics: Diagnostics, value: unknown): void {
     // TODO: No error message
-    if (typeof value !== 'function')
+    if (typeof value !== 'boolean')
       diagnostics.report('CHECK TODOS, No implementation error', Kernel['Error::constructor']);
   }
 }
