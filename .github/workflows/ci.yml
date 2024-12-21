@@ -1,0 +1,38 @@
+name: CI
+
+on:
+   pull_request:
+
+jobs:
+   build:
+      runs-on: ubuntu-latest
+
+      steps:
+         - name: Checkout repository
+           uses: actions/checkout@v2
+
+         - name: Setup Node.js
+           uses: actions/setup-node@v2
+           with:
+              node-version: '22'
+
+         - name: Install pnpm
+           run: corepack enable
+
+         - name: Install dependencies with pnpm
+           run: pnpm install --frozen-lockfile
+
+         - name: Check TypeScript types
+           run: pnpm run typecheck
+
+         - name: Lint
+           run: pnpm run lint
+
+         - name: Run tests
+           run: pnpm run test
+
+         - name: Build with Rolldown
+           run: pnpm run bundle
+
+         - name: Build Packages
+           run: node ./dist/build.js
