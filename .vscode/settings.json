@@ -1,0 +1,14 @@
+{
+   "files.autoSave": "onFocusChange",
+   "editor.formatOnSave": true,
+   "editor.defaultFormatter": "esbenp.prettier-vscode",
+   "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+      "node:test",
+      "typescript",
+      "dns",
+      "crypto",
+      "os",
+      "process"
+   ],
+   "vitest.debugExclude": ["<node_internals>/**", "**/node_modules/**", "src/api-builder/kernel.ts"]
+}

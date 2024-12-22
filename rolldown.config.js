@@ -1,18 +1,20 @@
 import { defineConfig } from 'rolldown';
 
-export default defineConfig([
-  {
-    input: './src/codegen/index.ts',
-    external: ['typescript', /node:/g],
-    output: {
-      file: 'codegen.js',
-    },
-  },
-  {
-    input: './src/api-builder/index.ts',
-    external: ['typescript'],
-    output: {
-      file: 'api-builder.js',
-    },
-  },
-]);
+/**@type {import('rolldown').RolldownOptions[]} */
+export const CONFIG = [
+   {
+      input: './src/package-builder/index.ts',
+      external: ['typescript', /node/, 'prettier'],
+      output: {
+         file: 'build.js',
+      },
+   },
+   {
+      input: './src/api-builder/index.ts',
+      external: ['typescript', /node/],
+      output: {
+         file: 'api-builder.js',
+      },
+   },
+];
+export default defineConfig(CONFIG);

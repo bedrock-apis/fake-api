@@ -1,21 +1,12 @@
-export { FunctionType } from './function-type';
-/*
-export class FunctionValidator{
-    get min(){return this.metadata.min;}
-    get max(){return this.metadata.max;}
-    get arguments(){return this.metadata.arguments;}
-    get privilege(){return this.metadata.privilege;}
-    constructor(metadata){ this.metadata = metadata; }
-    ValidArgumentTypes(args){
-        if(args.length > this.max || args.length < this.min) return {
-            ctor: ErrorConstructors.IncorrectNumberOfArguments,
-            message: ErrorMessages.IncorrectNumberOfArguments(this, args.length)
-        };
-    }
-    ResolveReturnType(bruh){}
-}
-export class Validator{
-    static IsValidType(value, typeOf){
+import { Kernel } from '../kernel';
 
-    }
-}*/
+export * from './default';
+export * from './params-definition';
+export * from './type';
+export * from './types/boolean';
+export * from './types/class';
+export * from './types/function';
+export * from './types/interface';
+export * from './types/number';
+export * from './types/string';
+export * from './types/dynamic';

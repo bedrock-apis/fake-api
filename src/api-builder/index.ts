@@ -1,6 +1,8 @@
-export { Kernel } from './kernel';
-export { ClassDefinition } from './class-definition';
-export { APIBuilder } from './api-builder';
-import { Kernel } from './kernel';
+import { Context } from './context';
 
-export const NATIVE_OBJECTS = Kernel.Construct('WeakSet');
+export { Kernel } from './kernel';
+export { ClassDefinition } from './context/class-definition';
+export * as APIFactory from './context/factory';
+export * as Types from './type-validators';
+export { ConfigContextOptions } from './context';
+export const CONTEXT = new Context();
